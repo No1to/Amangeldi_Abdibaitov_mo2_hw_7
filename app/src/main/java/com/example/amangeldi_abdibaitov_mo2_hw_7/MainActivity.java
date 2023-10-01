@@ -1,7 +1,9 @@
 package com.example.amangeldi_abdibaitov_mo2_hw_7;
 
 import android.os.Bundle;
+import android.content.Intent;
 import android.widget.Button;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,29 +11,37 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    private Button nextButton;
+
     private StringBuilder input = new StringBuilder();
     private double num1 = Double.NaN;
+    private Intent nextActivity;
     private char operator;
+
+    public static final String KEY = "Amount";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        nextActivity = new Intent(MainActivity.this, SecondActivity.class);
 
         textView = findViewById(R.id.text_view);
-
+        nextButton = findViewById(R.id.Button_Next);
+        nextButton.setVisibility(View.GONE);
 
         setupNumberButtons();
         setupOperationButtons();
-
 
         Button equalButton = findViewById(R.id.Button_Equal);
         equalButton.setOnClickListener(v -> {
             compute();
             operator = '=';
             updateTextView();
-        });
 
+            // Сделайте кнопку "Next" видимой при нажатии на кнопку "Equal"
+            nextButton.setVisibility(View.VISIBLE);
+        });
 
         Button clearButton = findViewById(R.id.Button_All_Clean);
         clearButton.setOnClickListener(v -> {
@@ -39,33 +49,8 @@ public class MainActivity extends AppCompatActivity {
             updateTextView();
         });
 
-
-        Button multiplyButton = findViewById(R.id.Button_Multiply);
-        multiplyButton.setOnClickListener(v -> {
-            if (!Double.isNaN(num1)) {
-                compute();
-            }
-            operator = 'x';
-            num1 = Double.parseDouble(input.toString());
-            input.setLength(0);
-            updateTextView();
-        });
-
-        Button minusButton = findViewById(R.id.Button_Minus);
-        minusButton.setOnClickListener(v -> {
-            if (!Double.isNaN(num1)) {
-                compute();
-            }
-            operator = '-';
-            num1 = Double.parseDouble(input.toString());
-            input.setLength(0);
-            updateTextView();
-        });
-
-
         Button dotButton = findViewById(R.id.Button_Point);
         dotButton.setOnClickListener(v -> {
-
             if (input.indexOf(".") == -1) {
                 input.append(".");
                 updateTextView();
@@ -84,6 +69,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void onNextActivity(View view) {
+        String result = textView.getText().toString();
+        nextActivity.putExtra(KEY, result);
+        startActivity(nextActivity);
+    }
+
     private void setupNumberButtons() {
         int[] numberButtonIds = {
                 R.id.Button_Number_Zero,
@@ -94,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.Button_Number_Five,
                 R.id.Button_Number_Six,
                 R.id.Button_Number_Seven,
-                R.id.Button_Number_Eeight,
+                R.id.Button_Number_Eight,
                 R.id.Button_Number_Nine
         };
 
